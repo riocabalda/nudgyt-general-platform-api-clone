@@ -3,6 +3,7 @@ import simulationService from '../services/learner/simulation.service';
 
 export const setupSocketHandlers = (io: Server): void => {
   io.on('connection', (socket: Socket & { payload?: any }) => {
+    console.log('======= A user connected =======');
     socket.on('reconnect', () => {
       try {
         simulationService.resumeSimulationTime(
@@ -14,6 +15,7 @@ export const setupSocketHandlers = (io: Server): void => {
     });
 
     socket.on('disconnect', () => {
+      console.log('======= A user disconnected =======');
       try {
         simulationService.pauseSimulationTime(
           socket.payload.simulationId
