@@ -46,9 +46,6 @@ const corsOptions: CorsOptions = {
 
 app.use(cors(corsOptions));
 
-// Make sure preflight requests are handled
-app.options('*', cors());
-
 const server = http.createServer(app);
 
 // Websocket
