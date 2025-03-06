@@ -15,6 +15,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+const server = http.createServer(app);
+
+// Websocket
+const io = createSocketServer(server);
+setupSocketHandlers(io);
+
 // Rate Limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -47,12 +53,6 @@ console.log('===allowedOrigins===', allowedOrigins);
 app.use(cors(corsOptions));
 
 // app.options('*', cors()); // Preflight request handling
-
-const server = http.createServer(app);
-
-// Websocket
-const io = createSocketServer(server);
-setupSocketHandlers(io);
 
 // ROUTES
 routes(app);
