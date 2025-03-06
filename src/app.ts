@@ -1,5 +1,5 @@
 import express from 'express';
-import cors from 'cors';
+import cors, { CorsOptions } from 'cors';
 import routes from './routes/index.route';
 import { errorHandler } from './middlewares/error-handler';
 import http from 'http';
@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import { createSocketServer } from './websocket/socket-server';
 import { setupSocketHandlers } from './websocket/socket-handlers';
+import serverConfig from './config/server.config';
 // import serverConfig from './config/server.config';
 
 const app = express();
@@ -25,47 +26,25 @@ const limiter = rateLimit({
 
 app.use(limiter);
 
-// const allowedOrigins = serverConfig.allowedOrigins
-//   ? serverConfig.allowedOrigins.split(',')
-//   : ['http://localhost:3000'];
+const allowedOrigins = serverConfig.allowedOrigins
+  ? serverConfig.allowedOrigins.split(',')
+  : ['http://localhost:3000'];
 
-// const corsOptions: CorsOptions = {
-//   origin: (
-//     origin: string | undefined,
-//     callback: (error: Error | null, allow?: boolean) => void
-//   ) => {
-//     if (allowedOrigins.includes(origin || '') || !origin) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   credentials: true
-// };
+const corsOptions: CorsOptions = {
+  origin: (
+    origin: string | undefined,
+    callback: (error: Error | null, allow?: boolean) => void
+  ) => {
+    if (allowedOrigins.includes(origin || '') || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+};
 
-// app.use(cors(corsOptions));
-
-app.use((req, res, next) => {
-  res.header(
-    'Access-Control-Allow-Origin',
-    'https://nudgyt-general-platform-client-clone.vercel.app'
-  );
-  res.header(
-    'Access-Control-Allow-Methods',
-    'GET, POST, PUT, DELETE, PATCH, OPTIONS'
-  );
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-  );
-  res.header('Access-Control-Allow-Credentials', 'true');
-
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  next();
-});
+app.use(cors(corsOptions));
 
 // Make sure preflight requests are handled
 app.options('*', cors());
