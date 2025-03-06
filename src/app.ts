@@ -46,6 +46,8 @@ const corsOptions: CorsOptions = {
 
 app.use(cors(corsOptions));
 
+app.options('*', cors());
+
 const server = http.createServer(app);
 
 // Websocket
