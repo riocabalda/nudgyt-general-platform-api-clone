@@ -1,5 +1,5 @@
 import express from 'express';
-import cors, { CorsOptions } from 'cors';
+import cors from 'cors';
 import routes from './routes/index.route';
 import { errorHandler } from './middlewares/error-handler';
 import http from 'http';
@@ -7,7 +7,7 @@ import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import { createSocketServer } from './websocket/socket-server';
 import { setupSocketHandlers } from './websocket/socket-handlers';
-import serverConfig from './config/server.config';
+// import serverConfig from './config/server.config';
 
 const app = express();
 app.use(express.static('public'));
@@ -25,27 +25,38 @@ const limiter = rateLimit({
 
 app.use(limiter);
 
-const allowedOrigins = serverConfig.allowedOrigins
-  ? serverConfig.allowedOrigins.split(',')
-  : ['http://localhost:3000'];
+// const allowedOrigins = serverConfig.allowedOrigins
+//   ? serverConfig.allowedOrigins.split(',')
+//   : ['http://localhost:3000'];
 
-const corsOptions: CorsOptions = {
-  origin: (
-    origin: string | undefined,
-    callback: (error: Error | null, allow?: boolean) => void
-  ) => {
-    if (allowedOrigins.includes(origin || '') || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true
-};
+// const corsOptions: CorsOptions = {
+//   origin: (
+//     origin: string | undefined,
+//     callback: (error: Error | null, allow?: boolean) => void
+//   ) => {
+//     if (allowedOrigins.includes(origin || '') || !origin) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   credentials: true
+// };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
-app.options('*', cors()); // Preflight request handling
+// Replace your current CORS setup with this for testing
+app.use(
+  cors({
+    origin: 'https://nudgyt-general-platform-client-clone.vercel.app',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  })
+);
+
+// Make sure preflight requests are handled
+app.options('*', cors());
 
 const server = http.createServer(app);
 
