@@ -56,4 +56,6 @@ router.patch(
   simulationController.pauseSimulation
 );
 
+router.get('/ping', simulationController.pingSimulation);
+
 export default router;

@@ -156,6 +156,18 @@ const getPreviousAttemptSimulations = asyncWrapper(
   }
 );
 
+const pingSimulation = asyncWrapper(async (req, res, next) => {
+  const response = createResponse({
+    data: {
+      status: 'success',
+      message: 'Server is up',
+      timestamp: new Date().toISOString()
+    }
+  });
+
+  res.json(response);
+});
+
 export default {
   startSimulation,
   resumeSimulation,
@@ -167,5 +179,6 @@ export default {
   getSimulationDates,
   getSimulationDetails,
   getSimulationSoftSkills,
-  getPreviousAttemptSimulations
+  getPreviousAttemptSimulations,
+  pingSimulation
 };
