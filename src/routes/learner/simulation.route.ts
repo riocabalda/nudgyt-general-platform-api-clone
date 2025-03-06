@@ -20,6 +20,7 @@ router.get(
   simulationValidation.getPreviousAttemptSimulations,
   simulationController.getPreviousAttemptSimulations
 );
+router.get('/ping', simulationController.pingSimulation);
 router.get(
   '/:simulationId/dates',
   simulationController.getSimulationDates
@@ -58,7 +59,5 @@ router.patch(
   simulationValidation.pauseSimulation,
   simulationController.pauseSimulation
 );
-
-router.get('/ping', simulationController.pingSimulation);
 
 export default router;
