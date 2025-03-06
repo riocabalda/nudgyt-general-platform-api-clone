@@ -46,7 +46,7 @@ console.log('===corsOptions===', corsOptions);
 console.log('===allowedOrigins===', allowedOrigins);
 app.use(cors(corsOptions));
 
-app.options('*', cors()); // Preflight request handling
+// app.options('*', cors()); // Preflight request handling
 
 const server = http.createServer(app);
 
