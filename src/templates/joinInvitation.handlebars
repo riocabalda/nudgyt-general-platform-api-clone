@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{subject}}</title>
+</head>
+<style>
+    * {
+        font-family: "Inter", sans-serif;
+
+        @media (min-width: 768px) {
+            body {
+                background-color: #f9fafb;
+            }
+
+            main {
+                box-shadow: 0px 1px 3px 0px #0000000d;
+            }
+
+            .container {
+                display: grid;
+                place-items: center;
+            }
+        }
+    }
+</style>
+
+<body>
+    <div class="container" style="display: grid; height: 100vh">
+        <main style="
+          max-width: 528px;
+          width: Fixed (528px) px;
+          height: Hug (806px) px;
+          padding: 40px 24px 24px 24px;
+          gap: 40px;
+          border-radius: 8px 0px 0px 0px;
+          opacity: 0px;
+          background-color: #fff;
+        ">
+            <img style="height: 40px; object-fit: contain; margin-bottom: 40px" src="{{{logoUrl}}}" />
+
+            <div>
+                <h1 style="font-size: 20px; margin: 0; margin-bottom: 40px">
+                    {{subject}}
+                </h1>
+
+                <div style="margin-bottom: 40px">
+                    <p style="
+              font-size: 16px;
+              font-weight: 500;
+              line-height: 24.8px;
+              text-align: left;
+              text-underline-position: from-font;
+              color: #727679;
+              text-decoration-skip-ink: none;
+            ">
+                        Dear {{recipient}},
+                    </p>
+
+                    <p style="
+              font-size: 16px;
+              font-weight: 500;
+              line-height: 24.8px;
+              text-align: left;
+              text-underline-position: from-font;
+              color: #727679;
+              text-decoration-skip-ink: none;
+            ">
+                        {{ customMsg1 }}
+                    </p>
+
+                    <p style="
+              font-size: 16px;
+              font-weight: 500;
+              line-height: 24.8px;
+              text-align: left;
+              text-underline-position: from-font;
+              color: #727679;
+              text-decoration-skip-ink: none;
+            ">
+                        {{ customMsg2 }}
+                    </p>
+                </div>
+
+                <a href="{{{url}}}">
+                    <button style="
+              text-decoration: none;
+              background-color: #5c05f2;
+              padding: 12px 32px 12px 32px;
+              border-radius: 4px;
+              color: #fff;
+              border: none;
+              cursor: pointer;
+            " onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                        {{buttonTitle}}
+                    </button>
+                </a>
+
+                <div style="margin-bottom: 40px; margin-top: 40px">
+                    <p style="
+              font-size: 16px;
+              font-weight: 500;
+              line-height: 24.8px;
+              text-align: left;
+              text-underline-position: from-font;
+              color: #727679;
+              text-decoration-skip-ink: none;
+            ">
+                        {{ customMsg3 }}
+                    </p>
+
+                    
+                    {{#if customMsg4}}
+                    <p style="
+              font-size: 16px;
+              font-weight: 500;
+              line-height: 24.8px;
+              text-align: left;
+              text-underline-position: from-font;
+              color: #727679;
+              text-decoration-skip-ink: none;
+            ">
+                        {{ customMsg4 }}
+                    </p>
+                    {{/if}}
+
+                    <p style="
+              font-size: 16px;
+              font-weight: 500;
+              line-height: 24.8px;
+              text-align: left;
+              text-underline-position: from-font;
+              color: #727679;
+              text-decoration-skip-ink: none;
+            ">
+                        Best regards,<br />
+                        The Nudgyt Team
+                    </p>
+                </div>
+                <hr style="margin-bottom: 40px" />
+                <div>
+                    <img src="{{{logoUrl}}}" style="height: 20px; object-fit: contain" />
+                    <p style="font-size: 12px; color: #727679">
+                        © 2025 Nudgyt Pte. Ltd. <br />
+                        Singapore
+                    </p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+
+</html>

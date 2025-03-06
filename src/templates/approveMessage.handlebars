@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{{ subject }}</title>
+    </head>
+    <body>
+        <br>
+        <img src='https://placehold.co/600x400' alt="Company Logo" style="display: block; margin: 0 auto; width: 300px;">
+        <br>
+
+        <div >
+            <div style="width: 80%; position: relative; margin: 0 auto; padding: 50px 50px; border-radius: 10px">
+                <p style="text-align: left; color:#102B37; font-family: Arial; ">Dear {{ fullName }}</p>
+                <br>
+                <h2 style="text-align: left; color: #0096CC; font-family: Arial; ">Great news!</h2>
+                <br>
+                <p style="text-align: left; color: #102B37; font-family: Arial; ">{{ customMsg1 }}</p>
+                <br>
+                <p style="text-align: left; color: #102B37; font-family: Arial; ">Please proceed to log in to your account by clicking on the button below</p>
+                <p style="text-align: center; margin: 50px 0px 50px 0px">
+                    <a href="{{{ url }}}" style="display: inline-block; padding: 10px 50px; background-color: #1A4595; color: #fff; text-decoration: none; border-radius: 5px; border: none; font-family: Arial; font-weight: 600">Log In</a>
+                </p>
+                <p style="text-align: left; color: #102B37; font-family: Arial; ">{{ customMsg2 }}</p>
+                <br>
+                <p style="text-align: left; color: #102B37; font-family: Arial; ">Best regards,</p>
+                <p style="text-align: left; color: #102B37; font-family: Arial; ">The NUDGYT Team</p>
+                <br>
+            </div>
+        </div>
+        
+    </body>
+</html>
