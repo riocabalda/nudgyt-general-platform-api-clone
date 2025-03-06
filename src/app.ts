@@ -45,15 +45,27 @@ app.use(limiter);
 
 // app.use(cors(corsOptions));
 
-// Replace your current CORS setup with this for testing
-app.use(
-  cors({
-    origin: 'https://nudgyt-general-platform-client-clone.vercel.app',
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-  })
-);
+app.use((req, res, next) => {
+  res.header(
+    'Access-Control-Allow-Origin',
+    'https://nudgyt-general-platform-client-clone.vercel.app'
+  );
+  res.header(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PUT, DELETE, PATCH, OPTIONS'
+  );
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.header('Access-Control-Allow-Credentials', 'true');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  next();
+});
 
 // Make sure preflight requests are handled
 app.options('*', cors());
