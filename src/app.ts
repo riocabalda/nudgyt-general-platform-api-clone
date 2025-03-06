@@ -43,6 +43,8 @@ const corsOptions: CorsOptions = {
   credentials: true
 };
 
+app.options('*', cors()); // Preflight request handling
+
 app.use(cors(corsOptions));
 
 const server = http.createServer(app);
