@@ -50,9 +50,10 @@ const corsOptions: CorsOptions = {
 };
 console.log('===corsOptions===', corsOptions);
 console.log('===allowedOrigins===', allowedOrigins);
+
 app.use(cors(corsOptions));
 
-// app.options('*', cors()); // Preflight request handling
+app.options('*', cors()); // Preflight request handling
 
 // ROUTES
 routes(app);
