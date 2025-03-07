@@ -7,7 +7,8 @@ const socketConfig: Partial<ServerOptions> = {
   pingTimeout: 60000,
   cors: {
     origin: frontendConfig.url,
-    methods: ['GET', 'POST']
+    methods: ['GET', 'POST'],
+    credentials: true
   }
 };
 

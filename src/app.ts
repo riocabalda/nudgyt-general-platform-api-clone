@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import { createSocketServer } from './websocket/socket-server';
 import { setupSocketHandlers } from './websocket/socket-handlers';
 import http from 'http';
+import frontendConfig from './config/frontend.config';
 
 const app = express();
 app.use(express.static('public'));
@@ -49,6 +50,8 @@ const server = http.createServer(app);
 // Websocket
 const io = createSocketServer(server);
 setupSocketHandlers(io);
+
+console.log('====== frontendConfig ======', frontendConfig.url);
 
 // ROUTES
 routes(app);
