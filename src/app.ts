@@ -42,12 +42,10 @@ const corsOptions: CorsOptions = {
   },
   credentials: true
 };
-console.log('===corsOptions===', corsOptions.origin);
-console.log('===allowedOrigins===', allowedOrigins);
 
 app.use(cors(corsOptions));
 
-app.options('*', cors(corsOptions)); // Preflight request handling
+app.options('*', cors()); // Preflight request handling
 
 const server = http.createServer(app);
 
@@ -57,6 +55,9 @@ setupSocketHandlers(io);
 
 // ROUTES
 routes(app);
+
+console.log('===corsOptions===', corsOptions.origin);
+console.log('===allowedOrigins===', allowedOrigins);
 
 // ERROR HANDLER
 app.use(errorHandler);
