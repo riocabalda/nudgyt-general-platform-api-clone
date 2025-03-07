@@ -4,7 +4,9 @@ import serverConfig from './config/server.config';
 import routes from './routes/index.route';
 import { errorHandler } from './middlewares/error-handler';
 import cookieParser from 'cookie-parser';
-import rateLimit from 'express-rate-limit';
+import { createSocketServer } from './websocket/socket-server';
+import { setupSocketHandlers } from './websocket/socket-handlers';
+import http from 'http';
 
 const app = express();
 app.use(express.static('public'));
@@ -12,15 +14,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Rate Limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per `window`
-  standardHeaders: true,
-  legacyHeaders: false
-});
+// // Rate Limiting
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   max: 100, // Limit each IP to 100 requests per `window`
+//   standardHeaders: true,
+//   legacyHeaders: false
+// });
 
-app.use(limiter);
+// app.use(limiter);
 
 const allowedOrigins = serverConfig.allowedOrigins
   ? serverConfig.allowedOrigins.split(',')
@@ -41,6 +43,12 @@ const corsOptions: CorsOptions = {
 };
 
 app.use(cors(corsOptions));
+
+const server = http.createServer(app);
+
+// Websocket
+const io = createSocketServer(server);
+setupSocketHandlers(io);
 
 // ROUTES
 routes(app);
