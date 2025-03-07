@@ -56,4 +56,4 @@ routes(app);
 // ERROR HANDLER
 app.use(errorHandler);
 
-export default app;
+export default server;
