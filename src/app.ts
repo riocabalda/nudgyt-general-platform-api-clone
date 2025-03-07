@@ -45,9 +45,9 @@ const corsOptions: CorsOptions = {
 console.log('===corsOptions===', corsOptions.origin);
 console.log('===allowedOrigins===', allowedOrigins);
 
-app.use(cors());
+app.use(cors(corsOptions));
 
-app.options('*', cors()); // Preflight request handling
+app.options('*', cors(corsOptions)); // Preflight request handling
 
 const server = http.createServer(app);
 
