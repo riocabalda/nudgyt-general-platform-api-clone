@@ -23,9 +23,11 @@ export const authenticateWs = async (
   socket: SocketType,
   next: NextFunction
 ) => {
+  console.log('====== authenticateWs ======');
   const { accessToken: bearerToken, payload: socketPayload } =
     socket.handshake.auth;
   const accessToken = bearerToken?.split(' ')[1];
+  console.log('====== accessToken ======', accessToken);
   if (!accessToken)
     return next(new Error('Authentication error: No token.'));
 

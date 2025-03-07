@@ -14,6 +14,7 @@ const socketConfig: Partial<ServerOptions> = {
 
 export const createSocketServer = (httpServer: any): Server => {
   const io = new Server(httpServer, socketConfig);
+  console.log('Socket server created', io);
 
   io.use((socket, next) => {
     authenticateWs(socket as any, next);
