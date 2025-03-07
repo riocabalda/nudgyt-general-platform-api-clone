@@ -1,12 +1,13 @@
 import { Server, ServerOptions } from 'socket.io';
-import frontendConfig from '../config/frontend.config';
+// import frontendConfig from '../config/frontend.config';
 import { authenticateWs } from '../middlewares/authenticate-ws';
 
 const socketConfig: Partial<ServerOptions> = {
   transports: ['websocket', 'polling'],
   pingTimeout: 60000,
   cors: {
-    origin: frontendConfig.url,
+    // origin: frontendConfig.url,
+    origin: '*',
     methods: ['GET', 'POST'],
     credentials: true
   }
