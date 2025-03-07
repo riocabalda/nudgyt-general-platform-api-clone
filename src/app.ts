@@ -42,10 +42,10 @@ const corsOptions: CorsOptions = {
   },
   credentials: true
 };
-console.log('===corsOptions===', corsOptions);
+console.log('===corsOptions===', corsOptions.origin);
 console.log('===allowedOrigins===', allowedOrigins);
 
-app.use(cors(corsOptions));
+app.use(cors());
 
 app.options('*', cors()); // Preflight request handling
 
