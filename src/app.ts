@@ -1,11 +1,8 @@
+import express from 'express';
 import cors, { CorsOptions } from 'cors';
-import { errorHandler } from './middlewares/error-handler';
-import { createSocketServer } from './websocket/socket-server';
-import { setupSocketHandlers } from './websocket/socket-handlers';
 import serverConfig from './config/server.config';
 import routes from './routes/index.route';
-import express from 'express';
-import http from 'http';
+import { errorHandler } from './middlewares/error-handler';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 
@@ -45,18 +42,10 @@ const corsOptions: CorsOptions = {
 
 app.use(cors(corsOptions));
 
-app.options('*', cors(corsOptions)); // Preflight request handling with proper CORS options
-
-const server = http.createServer(app);
-
-// Websocket
-const io = createSocketServer(server);
-setupSocketHandlers(io);
-
 // ROUTES
 routes(app);
 
 // ERROR HANDLER
 app.use(errorHandler);
 
-export default server;
+export default app;
