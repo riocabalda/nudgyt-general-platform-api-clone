@@ -6,7 +6,7 @@ const router = express.Router({ mergeParams: true });
 
 router.get(
   '/',
-  requirePermissions(['VIEW_LOGS']),
+  requirePermissions(['Log.View']),
   logController.getLogs
 );
 

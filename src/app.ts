@@ -4,10 +4,10 @@ import serverConfig from './config/server.config';
 import routes from './routes/index.route';
 import { errorHandler } from './middlewares/error-handler';
 import cookieParser from 'cookie-parser';
+import http from 'http';
 import { createSocketServer } from './websocket/socket-server';
 import { setupSocketHandlers } from './websocket/socket-handlers';
-import http from 'http';
-import frontendConfig from './config/frontend.config';
+// import rateLimit from 'express-rate-limit';
 
 const app = express();
 app.use(express.static('public'));
@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// // Rate Limiting
+// Rate Limiting
 // const limiter = rateLimit({
 //   windowMs: 15 * 60 * 1000, // 15 minutes
 //   max: 100, // Limit each IP to 100 requests per `window`
@@ -50,8 +50,6 @@ const server = http.createServer(app);
 // Websocket
 const io = createSocketServer(server);
 setupSocketHandlers(io);
-
-console.log('====== frontendConfig ======', frontendConfig.url);
 
 // ROUTES
 routes(app);

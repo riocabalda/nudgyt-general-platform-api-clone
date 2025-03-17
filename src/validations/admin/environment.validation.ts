@@ -6,7 +6,6 @@ const createEnvironment = validateRequest({
     location: z.string(),
     description: z.string(),
     environment_id: z.string(),
-    available_characters: z.array(z.string()),
     maximum_characters: z.number()
   })
 });
@@ -19,7 +18,7 @@ const updateEnvironment = validateRequest({
     location: z.string().optional(),
     description: z.string().optional(),
     environment_id: z.string().optional(),
-    available_characters: z.array(z.string()).optional(),
+    available_characters: z.string().optional(),
     maximum_characters: z.number().optional()
   })
 });

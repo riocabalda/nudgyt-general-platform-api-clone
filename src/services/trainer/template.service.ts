@@ -30,17 +30,23 @@ type LookupPipeline = NonNullable<
 >;
 
 async function getTemplates({
-  org,
+  orgSlug,
   user,
   search,
   sortBy,
+  isPublished,
+  userTemplates,
+  masterTemplates,
   page = 1,
   limit = 20
 }: {
-  org: string;
+  orgSlug?: string;
   user: UserType;
   search?: string;
   sortBy?: string;
+  isPublished?: boolean;
+  userTemplates?: boolean;
+  masterTemplates?: boolean;
   page?: number;
   limit?: number;
 }) {
@@ -48,7 +54,7 @@ async function getTemplates({
   const andQueries = [];
   let sort: SortQuery = { created_at: -1 };
 
-  const userOrgId = getOrgIdByOrgSlug({ user, org });
+  const userOrgId = getOrgIdByOrgSlug({ user, org: orgSlug ?? '' });
 
   andQueries.push({ deleted_at: { $eq: null } });
 
@@ -86,6 +92,21 @@ async function getTemplates({
     sort = getSortQuery(sortBy as SortOption);
   }
 
+  if (typeof isPublished !== 'undefined') {
+    andQueries.push({ is_published: isPublished });
+  }
+
+  if (typeof masterTemplates !== 'undefined') {
+    andQueries.push({
+      shared_to_organizations: { $in: [userOrgId] },
+      is_master_template: true
+    });
+  }
+
+  if (userTemplates && user) {
+    andQueries.push({ creator: user.id });
+  }
+
   if (andQueries.length) {
     query = { $and: andQueries };
   }
@@ -113,10 +134,13 @@ async function getTemplates({
       },
       {
         path: 'creator',
-        transform: (doc: any) => ({
-          _id: doc._id,
-          full_name: decryptFieldData(doc.full_name)
-        })
+        transform: (doc: any) => {
+          if (!doc) return null;
+          return {
+            _id: doc._id,
+            full_name: decryptFieldData(doc.full_name)
+          };
+        }
       },
       { path: 'environment' },
       { path: 'service_type' },

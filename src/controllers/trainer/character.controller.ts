@@ -87,8 +87,7 @@ const createCharacter = asyncWrapper(async (req, res, next) => {
 });
 
 const getCharacterVoiceTypes = asyncWrapper(async (req, res, next) => {
-  const voiceTypes =
-    await globalCharacterService.getCharacterVoiceTypes();
+  const voiceTypes = await globalCharacterService.getConvaiVoiceTypes();
 
   const response = createResponse({ data: voiceTypes });
 
@@ -97,7 +96,7 @@ const getCharacterVoiceTypes = asyncWrapper(async (req, res, next) => {
 
 const getAvailableLanguages = asyncWrapper(async (req, res, next) => {
   const availableLanguages =
-    await characterService.getAvailableLanguages();
+    await globalCharacterService.getConvaiLanguages();
 
   const response = createResponse({ data: availableLanguages });
 

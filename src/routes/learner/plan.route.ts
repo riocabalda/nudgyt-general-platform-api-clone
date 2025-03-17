@@ -6,7 +6,7 @@ const router = express.Router({ mergeParams: true });
 
 router.get(
   '/',
-  requirePermissions(['VIEW_SUBSCRIPTION']),
+  requirePermissions(['Account.Subscription.View']),
   planController.getPlans
 );
 

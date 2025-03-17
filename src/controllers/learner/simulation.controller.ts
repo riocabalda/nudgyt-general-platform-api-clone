@@ -38,9 +38,13 @@ const pauseSimulation = asyncWrapper(async (req, res, next) => {
 });
 
 const getSimulationById = asyncWrapper(async (req, res, next) => {
-  const { id } = req.params;
+  const simulationId = req.params.id;
+  const userId = req.user.id;
 
-  const simulation = await simulationService.getSimulationById(id);
+  const simulation = await simulationService.getSimulationById({
+    simulationId,
+    userId
+  });
 
   const response = createResponse({ data: simulation });
 
@@ -162,15 +166,7 @@ const getPreviousAttemptSimulations = asyncWrapper(
 );
 
 const pingSimulation = asyncWrapper(async (req, res, next) => {
-  const response = createResponse({
-    data: {
-      status: 'success',
-      message: 'Server is up',
-      timestamp: new Date().toISOString()
-    }
-  });
-
-  res.json(response);
+  res.send('Pong');
 });
 
 export default {

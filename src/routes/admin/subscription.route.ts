@@ -6,7 +6,7 @@ const router = express.Router({ mergeParams: true });
 
 router.get(
   '/current',
-  requirePermissions(['VIEW_ORGANIZATION_SUBSCRIPTION']),
+  requirePermissions(['Organization.Subscription.View']),
   subscriptionController.getCurrentSubscription
 );
 

@@ -25,6 +25,8 @@ const messages = {
   FORM_QUESTIONS_NOT_FOUND: 'Form Questions not found.',
   SIMULATION_UPDATED: 'Simulation updated.',
   SIMULATION_ENDED: 'Simulation has already ended. Please try again.',
+  SIMULATION_UNAUTHORIZED_ACCESS:
+    'Unauthorized to access this simulation.',
   SURVEY_NOT_FOUND: 'Survey not found.',
   SURVEY_ALREADY_EXISTS: 'Survey already exists.',
   SIMULATION_COMPLETED: 'Simulation completed.',

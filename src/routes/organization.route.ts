@@ -19,14 +19,14 @@ const uploader = uploaderService.createUploader({
 
 router.get(
   '/',
-  requirePermissions(['VIEW_ORGANIZATIONS'], {
+  requirePermissions(['Organization.View'], {
     allowPublicAdmins: true
   }),
   organizationController.getOrganization
 );
 router.patch(
   '/',
-  requirePermissions(['UPDATE_ORGANIZATION_SETTINGS']),
+  requirePermissions(['Organization.Settings.Update']),
   uploader.memory(),
   organizationValidation.updateOrganization,
   organizationController.updateOrganization
@@ -34,14 +34,14 @@ router.patch(
 
 router.patch(
   '/invitations/:membershipId',
-  requirePermissions(['UPDATE_INVITATIONS']),
+  requirePermissions(['Invitation.Update']),
   organizationValidation.updateInvitation,
   organizationController.updateInvitation
 );
 
 router.patch(
   '/invitations/owners/:pendingOrgId',
-  requirePermissions(['UPDATE_INVITATIONS']),
+  requirePermissions(['Invitation.Update']),
   organizationValidation.updateOwnerInvitation,
   organizationController.updateOwnerInvitation
 );

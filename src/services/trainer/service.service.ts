@@ -54,7 +54,7 @@ import logService from '../log.service';
 
 type Metric = {
   label: string;
-  value: number;
+  value: number | string;
   showTrend: boolean;
   change: number;
   isIncrease: boolean;
@@ -478,7 +478,8 @@ async function getServiceMetrics({
         started_at: {
           $gte: new Date(period.current.start),
           $lte: new Date(period.current.end)
-        }
+        },
+        ended_at: { $ne: null }
       }
     },
     {
@@ -661,7 +662,7 @@ async function getServiceMetrics({
     },
     {
       label: 'Total Passing Rate',
-      value: passingRate.value,
+      value: passingRate.value + "%",
       showTrend: true,
       change: passingRate.percentage,
       isIncrease: passingRate.is_up
@@ -707,6 +708,14 @@ async function getPopularServices({ orgSlug }: { orgSlug: string }) {
         localField: '_id',
         foreignField: 'service',
         as: 'simulations'
+      }
+    },
+    {
+      $match: {
+        $or: [
+          { 'simulations.is_trial_data': false },
+          { 'simulations.is_trial_data': { $exists: false } }
+        ]
       }
     },
     {

@@ -34,7 +34,7 @@ export function getLearnersScoreCount(
       }
     >;
   },
-  period: 'current' | 'previous',
+  period: 'current' | 'previous'
 ) {
   const count = Object.keys(data[period]).length;
   const learnerScores = Object.values(data[period]);
@@ -43,7 +43,7 @@ export function getLearnersScoreCount(
 
   if (learnerScores) {
     for (const learnerData of learnerScores) {
-      const isPassed = getLearnerIsPassed(learnerData);
+      const isPassed = isLearnerPassed(learnerData);
       if (isPassed) {
         totalPass++;
       }
@@ -54,18 +54,19 @@ export function getLearnersScoreCount(
   return { count, totalScore, totalPass };
 }
 
-export function getLearnerIsPassed(
-  data: {
-    overall_total: number;
-    overall_correct: number;
-    overall_score: number;
-  },
-) {
-  let isPassed = false;
+export function isLearnerPassed(data: {
+  overall_total: number;
+  overall_correct: number;
+  overall_score: number;
+}) {
+  const score = data?.overall_correct || 0;
+  const threshold = data?.overall_total - 4; // passing score
 
-  if ((data?.overall_correct || 0) >= data?.overall_total - 4) {
-    isPassed = true;
-  }
+  // check if the score is less than 0 or the threshold is not set
+  if (score <= 0 || !threshold) return false;
 
-  return isPassed;
+  // check if the score is greater than the threshold
+  if (score >= threshold) return true;
+
+  return false;
 }

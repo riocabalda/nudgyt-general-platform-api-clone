@@ -21,18 +21,25 @@ import {
 } from '../../utils/service-sort-keys';
 import { withFromAndTo } from '../../utils/with-from-to';
 import logService from '../log.service';
+
 async function getTemplates({
-  org,
+  orgSlug,
   user,
   search,
   sortBy,
+  isPublished,
+  userTemplates,
+  masterTemplates,
   page = 1,
   limit = 20
 }: {
-  org: string;
+  orgSlug?: string;
   user: UserType;
   search?: string;
   sortBy?: string;
+  isPublished?: boolean;
+  userTemplates?: boolean;
+  masterTemplates?: boolean;
   page?: number;
   limit?: number;
 }) {
@@ -40,7 +47,7 @@ async function getTemplates({
   const andQueries = [];
   let sort: SortQuery = { created_at: -1 };
 
-  const userOrgId = getOrgIdByOrgSlug({ user, org });
+  const userOrgId = getOrgIdByOrgSlug({ user, org: orgSlug ?? '' });
 
   andQueries.push({ deleted_at: { $eq: null } });
 
@@ -76,6 +83,21 @@ async function getTemplates({
 
   if (sortBy) {
     sort = getSortQuery(sortBy as SortOption);
+  }
+
+  if (typeof isPublished !== 'undefined') {
+    andQueries.push({ is_published: isPublished });
+  }
+
+  if (typeof masterTemplates !== 'undefined') {
+    andQueries.push({
+      shared_to_organizations: { $in: [userOrgId] },
+      is_master_template: true
+    });
+  }
+
+  if (userTemplates && user) {
+    andQueries.push({ creator: user.id });
   }
 
   if (andQueries.length) {

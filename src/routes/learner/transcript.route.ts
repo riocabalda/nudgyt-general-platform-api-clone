@@ -13,12 +13,12 @@ router.get(
 
 router.post(
   '/',
-  requirePermissions(['CREATE_TRANSCRIPTS']),
+  requirePermissions(['Transcript.Create']),
   transcriptValidation.createTranscript,
   transcriptController.createTranscript
 );
 
-router.post('/create-comment', transcriptController.createComment);
-router.post('/delete-comment', transcriptController.deleteComment);
+router.post('/create-comment', requirePermissions(['Transcript.Comment.Create']), transcriptController.createComment);
+router.post('/delete-comment', requirePermissions(['Transcript.Comment.Delete']), transcriptController.deleteComment);
 
 export default router;

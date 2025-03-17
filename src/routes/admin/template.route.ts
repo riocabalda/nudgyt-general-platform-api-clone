@@ -13,13 +13,19 @@ const upload = multer({
   }
 });
 
-router.get('/', templateController.getTemplates);
-router.get('/shared', templateController.getSharedTemplates);
-router.get('/:id', templateController.getTemplateById);
-
+router.get(
+  '/',
+  requirePermissions(['Template.View']),
+  templateController.getTemplates
+);
+router.get(
+  '/shared',
+  requirePermissions(['Template.View']),
+  templateController.getSharedTemplates
+);
 router.post(
   '/',
-  requirePermissions(['CREATE_TEMPLATES']),
+  requirePermissions(['Template.Create']),
   [
     upload.fields([
       { name: 'rubrics', maxCount: 1 },
@@ -31,29 +37,29 @@ router.post(
 );
 router.post(
   '/:id/duplicate',
-  requirePermissions(['CREATE_TEMPLATES']),
+  requirePermissions(['Template.Create']),
   templateController.duplicateTemplate
 );
 
 router.post(
   '/:id/share',
-  requirePermissions(['UPDATE_TEMPLATES']),
+  requirePermissions(['Template.Update']),
   templateValidation.shareTemplate,
   templateController.shareTemplateToOrganizations
 );
 router.post(
   '/:id/publish',
-  requirePermissions(['UPDATE_TEMPLATES']),
+  requirePermissions(['Template.Update']),
   templateController.publishTemplate
 );
 router.post(
   '/:id/unpublish',
-  requirePermissions(['UPDATE_TEMPLATES']),
+  requirePermissions(['Template.Update']),
   templateController.unpublishTemplate
 );
 router.patch(
   '/:id',
-  requirePermissions(['UPDATE_TEMPLATES']),
+  requirePermissions(['Template.Update']),
   [
     upload.fields([
       { name: 'rubrics', maxCount: 1 },
@@ -66,7 +72,7 @@ router.patch(
 
 router.delete(
   '/:id',
-  requirePermissions(['DELETE_TEMPLATES']),
+  requirePermissions(['Template.Delete']),
   templateController.deleteTemplate
 );
 

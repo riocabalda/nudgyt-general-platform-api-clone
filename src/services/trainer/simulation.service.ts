@@ -4,8 +4,8 @@ import User from '../../models/user.model';
 import dayjsUTCDate from '../../utils/dayjs-utc-date';
 import messages from '../../constants/response-messages';
 import Organization from '../../models/organization.model';
-import Agent_Softskill from '../../models/agent_softskill.model';
-import TranscriptSummary from '../../models/transcript-summary.model';
+import AgentSoftSkill from '../../models/agent-softskill.model';
+import AgentTranscriptSummary from '../../models/agent-transcript-summary.model';
 import {
   getSimulationScore,
   RawSkillRegex,
@@ -36,6 +36,8 @@ import { ServiceType } from '../../models/service.model';
 import { decryptFieldData, encryptFieldData } from '../../helpers/db';
 import { ANSWER_NOT_REQUIRED } from '../../constants/simulation';
 import { withFromAndTo } from '../../utils/with-from-to';
+import socketManager from '../../websocket/socket-manager';
+import calculateEndedAtTimestamp from '../../utils/calculate-ended-at-timestamp';
 
 async function startSimulation(
   payloadIds: Record<string, string>,
@@ -96,11 +98,22 @@ async function startSimulation(
   return newSimulation;
 }
 
-async function getSimulationById(id: string) {
-  const simulation = await Simulation.findById(id);
+async function getSimulationById({
+  simulationId,
+  userId
+}: {
+  simulationId: string;
+  userId: string;
+}) {
+  const simulation = await Simulation.findById(simulationId);
 
   if (!simulation)
     throw createHttpError.NotFound(messages.SIMULATION_NOT_FOUND);
+
+  if (simulation.learner.toString() !== userId)
+    throw createHttpError.Forbidden(
+      messages.SIMULATION_UNAUTHORIZED_ACCESS
+    );
 
   const serviceLevel = (await ServiceLevel.findById(
     simulation.service_level
@@ -135,7 +148,10 @@ async function stopSimulation(
     await Simulation.updateOne(
       { _id: simulationId },
       {
-        ended_at: new Date()
+        ended_at: calculateEndedAtTimestamp(
+          existingSimulation,
+          serviceLevel
+        )
       }
     );
     return { message: messages.SIMULATION_UPDATED };
@@ -223,7 +239,10 @@ async function stopSimulation(
   await Simulation.updateOne(
     { _id: simulationId },
     {
-      ended_at: new Date(),
+      ended_at: calculateEndedAtTimestamp(
+        existingSimulation,
+        serviceLevel
+      ),
       form_answers: formAnswers,
       simulation_result: {
         sections_score: sectionScores,
@@ -278,17 +297,31 @@ async function updateFormAnswers(
 }
 
 async function pauseSimulationTime(simulationId: string) {
-  const simulation = (await Simulation.findById(simulationId)) as any;
+  const simulation = await Simulation.findById(simulationId).populate(
+    'service_level'
+  );
 
-  if (
+  const timeLimitInMilliseconds = (
+    simulation?.service_level as ServiceLevelType
+  ).time_limit;
+  const timeUsedInMilliseconds = getSimulationUsedTime(simulation);
+  const timeRemainingInMilliseconds =
+    (timeLimitInMilliseconds || 0) - timeUsedInMilliseconds;
+
+  const canPause =
     (simulation?.started_at &&
       simulation?.resumed_at.length === 0 &&
       simulation?.paused_at.length === 0 &&
       !simulation.ended_at) ||
     (simulation?.started_at &&
       simulation?.resumed_at.length >= simulation?.paused_at.length &&
-      !simulation.ended_at)
-  ) {
+      !simulation.ended_at);
+
+  const hasTimeRemaining =
+    timeLimitInMilliseconds === -1 ||
+    (timeLimitInMilliseconds !== -1 && timeRemainingInMilliseconds > 0);
+
+  if (canPause && hasTimeRemaining) {
     const updatedSimulation = await Simulation.findByIdAndUpdate(
       simulationId,
       { $push: { paused_at: dayjsUTCDate() } },
@@ -297,16 +330,34 @@ async function pauseSimulationTime(simulationId: string) {
       }
     );
     if (!updatedSimulation) throw createHttpError.NotFound();
+
+    // Emit the 'time-updated' event when the simulation time is successfully paused
+    const io = socketManager.getIO();
+    if (io) io.emit('time-updated', { simulation_id: simulationId });
   }
 }
 
 async function resumeSimulationTime(simulationId: string) {
-  const simulation = (await Simulation.findById(simulationId)) as any;
+  const simulation = await Simulation.findById(simulationId).populate(
+    'service_level'
+  );
 
-  if (
+  const timeLimitInMilliseconds = (
+    simulation?.service_level as ServiceLevelType
+  ).time_limit;
+  const timeUsedInMilliseconds = getSimulationUsedTime(simulation);
+  const timeRemainingInMilliseconds =
+    (timeLimitInMilliseconds || 0) - timeUsedInMilliseconds;
+
+  const canResume =
     simulation?.started_at &&
-    simulation?.paused_at.length > simulation?.resumed_at.length
-  ) {
+    simulation?.paused_at.length > simulation?.resumed_at.length;
+
+  const hasTimeRemaining =
+    timeLimitInMilliseconds === -1 ||
+    (timeLimitInMilliseconds !== -1 && timeRemainingInMilliseconds > 0);
+
+  if (canResume && hasTimeRemaining) {
     const updatedSimulation = await Simulation.findByIdAndUpdate(
       simulationId,
       { $push: { resumed_at: dayjsUTCDate() } },
@@ -492,7 +543,7 @@ async function getSimulationDetails({
     throw createHttpError.NotFound();
   }
 
-  const transcriptSummary = await TranscriptSummary.findOne({
+  const agentTranscriptSummary = await AgentTranscriptSummary.findOne({
     simulation: simulation._id
   });
 
@@ -517,7 +568,7 @@ async function getSimulationDetails({
     isCompetent: isSimulationCompetent,
     formQuestions: serviceLevelData.form_questions,
     formAnswers: simulation.form_answers,
-    transcriptSummary: transcriptSummary?.summary
+    transcriptSummary: agentTranscriptSummary?.summary
   };
 }
 
@@ -542,7 +593,7 @@ async function getSimulationSoftSkills({
     throw createHttpError.Conflict('Organization not found');
   }
 
-  const softSkillDoc = await Agent_Softskill.findOne({
+  const softSkillDoc = await AgentSoftSkill.findOne({
     simulation_id: simulationId
   });
   if (softSkillDoc === null) return null;

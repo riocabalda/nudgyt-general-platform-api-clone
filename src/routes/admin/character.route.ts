@@ -5,25 +5,42 @@ import characterValidation from '../../validations/admin/character.validation';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/', characterController.getCharacters);
-router.get('/voice-types', characterController.getCharacterVoiceTypes);
-router.get('/paginated', characterController.getPaginatedCharacters);
+router.get(
+  '/',
+  requirePermissions(['Character.View']),
+  characterController.getCharacters
+);
+router.get(
+  '/voice-types',
+  requirePermissions(['Character.Voice.View']),
+  characterController.getCharacterVoiceTypes
+);
+router.get(
+  '/paginated',
+  requirePermissions(['Character.View']),
+  characterController.getPaginatedCharacters
+);
 router.get(
   '/available-languages',
+  requirePermissions(['Character.Language.View']),
   characterController.getAvailableLanguages
 );
-router.get('/:characterId', characterController.getCharacter);
+router.get(
+  '/:characterId',
+  requirePermissions(['Character.View']),
+  characterController.getCharacter
+);
 
 router.post(
   '/',
-  requirePermissions(['CREATE_CHARACTERS']),
+  requirePermissions(['Character.Create']),
   characterValidation.createCharacter,
   characterController.createCharacter
 );
 
 router.put(
   '/:characterId',
-  requirePermissions(['UPDATE_CHARACTERS']),
+  requirePermissions(['Character.Update']),
   characterValidation.characterEditValidation,
   characterController.updateCharacter
 );

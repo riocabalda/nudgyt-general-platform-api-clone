@@ -2,6 +2,7 @@ import connectDb from '../helpers/db';
 import seedAvatar from './avatar';
 import seedEnvironment from './environment';
 import seedOrganization from './organization';
+import seedPermissions from './permissions';
 import seedSampleEnterprises from './sample-enterprises';
 import seedSampleOrganizations from './sample-organizations';
 import seedSampleUsers from './sample-users';
@@ -9,18 +10,21 @@ import seedSampleUsersPublic from './sample-users-public';
 import seedServiceType from './service-type';
 import seedSubscriptionPlan from './subscription-plan';
 import seedSuperAdmin from './superadmin';
+import seedConvaiData from './convai-data';
 
 const VALID_SEED_TYPES = new Set([
   'avatar',
   'environment',
   'organization',
+  'permissions',
   'servicetype',
   'superadmin',
   'subscription-plan',
   'sample-users',
   'sample-users-public',
   'sample-organizations',
-  'sample-enterprises'
+  'sample-enterprises',
+  'convai-data'
 ]);
 
 const validSeedTypesStr = [...VALID_SEED_TYPES]
@@ -31,16 +35,19 @@ async function seedDatabase(seedTypes: Set<string>) {
   const promises: Promise<unknown>[] = [];
 
   if (seedTypes.has('avatar')) {
-    await seedAvatar();
+    promises.push(seedAvatar());
   }
   if (seedTypes.has('environment')) {
-    await seedEnvironment();
+    promises.push(seedEnvironment());
   }
   if (seedTypes.has('organization')) {
     await seedOrganization(); // Awaited separately as others depend on this
   }
+  if (seedTypes.has('permissions')) {
+    promises.push(seedPermissions());
+  }
   if (seedTypes.has('servicetype')) {
-    await seedServiceType();
+    promises.push(seedServiceType());
   }
   if (seedTypes.has('superadmin')) {
     promises.push(seedSuperAdmin());
@@ -60,7 +67,9 @@ async function seedDatabase(seedTypes: Set<string>) {
   if (seedTypes.has('sample-enterprises')) {
     promises.push(seedSampleEnterprises());
   }
-
+  if (seedTypes.has('convai-data')) {
+    promises.push(seedConvaiData());
+  }
   await Promise.all(promises);
 }
 

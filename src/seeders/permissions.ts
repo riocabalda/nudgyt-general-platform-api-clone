@@ -1,10 +1,10 @@
-import organizationConfig from '../../config/organization.config';
+import organizationConfig from '../config/organization.config';
 import {
   OrganizationPermissions,
   PublicOrganizationPermissions
-} from '../../constants/permissions';
-import connectDb, { decryptFieldData } from '../../helpers/db';
-import Organization from '../../models/organization.model';
+} from '../constants/permissions';
+import { decryptFieldData } from '../helpers/db';
+import Organization from '../models/organization.model';
 
 async function addPermissionsToExistingOrganizations() {
   const orgDocs = await Organization.find();
@@ -28,19 +28,16 @@ async function addPermissionsToExistingOrganizations() {
   await Promise.all(promises);
 }
 
-async function run() {
+async function seedPermissions() {
   try {
-    await connectDb();
-    await addPermissionsToExistingOrganizations();
+    console.log('Seeding Permissions...');
 
-    process.exit(0);
+    await Promise.all([addPermissionsToExistingOrganizations()]);
+
+    console.log('Permissions seeded.');
   } catch (error) {
-    console.error(
-      `Failed adding permissions to existing organizations: ${error}`
-    );
-
-    process.exit(1);
+    throw new Error(`Error seeding Permissions: ${error}`);
   }
 }
 
-run();
+export default seedPermissions;

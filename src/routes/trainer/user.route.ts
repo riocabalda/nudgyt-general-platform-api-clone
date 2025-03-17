@@ -7,7 +7,7 @@ const router = express.Router({ mergeParams: true });
 
 router.get(
   '/accounts/access',
-  requirePermissions(['VIEW_ACCOUNT']),
+  requirePermissions(['Account.View']),
   userValidation.getAccess,
   userController.getAccess
 );

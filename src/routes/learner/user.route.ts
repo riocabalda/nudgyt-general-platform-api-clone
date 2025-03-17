@@ -5,11 +5,15 @@ import userValidation from '../../validations/learner/user.validation';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/experience', userController.getLearnerExperience);
+router.get(
+  '/experience',
+  requirePermissions(['User.Experience.View']),
+  userController.getLearnerExperience
+);
 
 router.get(
   '/accounts/access',
-  requirePermissions(['VIEW_ACCOUNT']),
+  requirePermissions(['Account.View']),
   userValidation.getAccess,
   userController.getAccess
 );

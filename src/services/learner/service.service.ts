@@ -146,24 +146,19 @@ async function getServices({
   if (service_view === 'recent') {
     pipeline.push({
       $match: {
-        attempts_count: { $gt: 0 }
-      }
-    });
-
-    pipeline.push({
-      $set: {
-        simulations: {
-          $filter: {
-            input: '$simulations',
-            as: 'sim',
-            cond: {
-              $or: [
-                { $eq: ['$$sim.is_trial_data', false] },
-                { $eq: [{ $type: '$$sim.is_trial_data' }, 'missing'] }
-              ]
+        $and: [
+          { attempts_count: { $gt: 0 } },
+          {
+            simulations: {
+              $elemMatch: {
+                $or: [
+                  { is_trial_data: false },
+                  { is_trial_data: { $exists: false } }
+                ]
+              }
             }
           }
-        }
+        ]
       }
     });
 

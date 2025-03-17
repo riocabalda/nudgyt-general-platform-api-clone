@@ -4,14 +4,39 @@ import createResponse from '../../utils/create-response';
 
 const getTemplates = asyncWrapper(async (req, res, next) => {
   const { org } = req.params;
-  const { search, sort_by, page } = req.query;
+  const {
+    search,
+    sort_by,
+    page,
+    is_published,
+    user_templates,
+    master_templates
+  } = req.query;
   const user = req.user;
 
+  const userTemplates: boolean | undefined = {
+    true: true,
+    false: false
+  }[user_templates as string];
+
+  const masterTemplates: boolean | undefined = {
+    true: true,
+    false: false
+  }[master_templates as string];
+
+  const isPublished: boolean | undefined = {
+    true: true,
+    false: false
+  }[is_published as string];
+
   const templates = await templateService.getTemplates({
-    org,
+    orgSlug: org,
     user,
     search: search as string,
     sortBy: sort_by as string,
+    isPublished,
+    userTemplates,
+    masterTemplates,
     page: Number(page) || 1
   });
 

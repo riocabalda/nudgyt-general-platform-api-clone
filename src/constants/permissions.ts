@@ -1,6 +1,6 @@
 import roles from './roles';
 
-export type Permission = (typeof PERMISSIONS)[number];
+export type Permission = keyof typeof PermissionRecord;
 
 type PermissionColumn = {
   publicLearner?: true;
@@ -16,81 +16,6 @@ type PermissionColumn = {
 };
 
 type PermissionEntry = [Permission, PermissionColumn];
-
-export const PERMISSIONS = [
-  /** Dashboard */
-  'VIEW_DASHBOARD',
-
-  /** Services */
-  'VIEW_SERVICES',
-  'CREATE_SERVICES',
-  'UPDATE_SERVICES',
-  'DELETE_SERVICES',
-
-  /** Templates */
-  'VIEW_TEMPLATES',
-  'CREATE_TEMPLATES',
-  'UPDATE_TEMPLATES',
-  'DELETE_TEMPLATES',
-
-  /** Characters */
-  'VIEW_CHARACTERS',
-  'CREATE_CHARACTERS',
-  'UPDATE_CHARACTERS',
-  'DELETE_CHARACTERS',
-
-  /** Simulations */
-  'CREATE_SIMULATIONS',
-
-  /** Simulation Transcripts */
-  'CREATE_TRANSCRIPTS',
-
-  /** Users */
-  'VIEW_USERS',
-  'CREATE_USERS',
-  'UPDATE_USERS',
-  'DELETE_USERS',
-
-  /** Organizations */
-  'VIEW_ORGANIZATIONS',
-  'CREATE_ORGANIZATIONS',
-  'UPDATE_ORGANIZATIONS',
-  'DELETE_ORGANIZATIONS',
-
-  /** Organization Settings */
-  'VIEW_ORGANIZATION_SETTINGS',
-  'CREATE_ORGANIZATION_SETTINGS',
-  'UPDATE_ORGANIZATION_SETTINGS',
-  // 'DELETE_ORGANIZATION_SETTINGS', // Not possible
-
-  /** Organization Subscription */
-  'VIEW_ORGANIZATION_SUBSCRIPTION',
-  'CREATE_ORGANIZATION_SUBSCRIPTION',
-  'UPDATE_ORGANIZATION_SUBSCRIPTION',
-  // 'DELETE_ORGANIZATION_SUBSCRIPTION', // Not possible
-
-  /** Organization Usage */
-  'VIEW_ORGANIZATION_USAGE',
-
-  /** Invitations */
-  'CREATE_INVITATIONS',
-  'UPDATE_INVITATIONS',
-
-  /** Logs */
-  'VIEW_LOGS',
-
-  /** Account */
-  'VIEW_ACCOUNT',
-  'CREATE_ACCOUNT',
-  'UPDATE_ACCOUNT',
-  // 'DELETE_ACCOUNT', // Not possible
-
-  /** Subscription */
-  'VIEW_SUBSCRIPTION',
-  'CREATE_SUBSCRIPTION',
-  'UPDATE_SUBSCRIPTION'
-  // 'DELETE_SUBSCRIPTION' // Not possible
-] as const;
 
 const PermissionGroup = {
   EVERYONE: {
@@ -131,52 +56,92 @@ const PermissionGroup = {
   }
 } as const satisfies Record<string, PermissionColumn>;
 
-const PermissionRecord: PermissionEntry[] = [
-  ['VIEW_DASHBOARD', PermissionGroup.EVERYONE],
-  ['VIEW_SERVICES', PermissionGroup.EVERYONE],
-  ['CREATE_SERVICES', PermissionGroup.ADMINS_AND_TRAINERS],
-  ['UPDATE_SERVICES', PermissionGroup.ADMINS_AND_TRAINERS],
-  ['DELETE_SERVICES', PermissionGroup.ADMINS_AND_TRAINERS],
-  ['VIEW_TEMPLATES', PermissionGroup.ADMINS_AND_TRAINERS],
-  ['CREATE_TEMPLATES', PermissionGroup.ADMINS_AND_TRAINERS],
-  ['UPDATE_TEMPLATES', PermissionGroup.ADMINS_AND_TRAINERS],
-  ['DELETE_TEMPLATES', PermissionGroup.ADMINS_AND_TRAINERS],
-  ['VIEW_CHARACTERS', PermissionGroup.ADMINS_AND_TRAINERS],
-  ['CREATE_CHARACTERS', PermissionGroup.ADMINS_AND_TRAINERS],
-  ['UPDATE_CHARACTERS', PermissionGroup.ADMINS_AND_TRAINERS],
-  ['DELETE_CHARACTERS', PermissionGroup.ADMINS_AND_TRAINERS],
-  ['CREATE_SIMULATIONS', PermissionGroup.LEARNERS],
-  ['CREATE_TRANSCRIPTS', PermissionGroup.LEARNERS],
-  ['VIEW_USERS', PermissionGroup.ADMINS],
-  ['CREATE_USERS', PermissionGroup.ADMINS],
-  ['UPDATE_USERS', PermissionGroup.ADMINS],
-  ['DELETE_USERS', PermissionGroup.ADMINS],
-  ['VIEW_ORGANIZATIONS', PermissionGroup.ADMINS],
-  ['CREATE_ORGANIZATIONS', PermissionGroup.PUBLIC_ADMINS],
-  ['UPDATE_ORGANIZATIONS', PermissionGroup.PUBLIC_ADMINS],
-  ['DELETE_ORGANIZATIONS', PermissionGroup.PUBLIC_ADMINS],
-  ['VIEW_ORGANIZATION_SETTINGS', { organizationOwner: true }],
-  ['CREATE_ORGANIZATION_SETTINGS', { organizationOwner: true }],
-  ['UPDATE_ORGANIZATION_SETTINGS', { organizationOwner: true }],
-  ['VIEW_ORGANIZATION_SUBSCRIPTION', { organizationOwner: true }],
-  ['CREATE_ORGANIZATION_SUBSCRIPTION', { organizationOwner: true }],
-  ['UPDATE_ORGANIZATION_SUBSCRIPTION', { organizationOwner: true }],
-  ['VIEW_ORGANIZATION_USAGE', { organizationOwner: true }],
-  ['CREATE_INVITATIONS', PermissionGroup.ADMINS],
-  ['UPDATE_INVITATIONS', PermissionGroup.EVERYONE],
-  ['VIEW_LOGS', PermissionGroup.ADMINS],
-  ['VIEW_ACCOUNT', PermissionGroup.EVERYONE],
-  ['CREATE_ACCOUNT', PermissionGroup.EVERYONE],
-  ['UPDATE_ACCOUNT', PermissionGroup.EVERYONE],
-  ['VIEW_SUBSCRIPTION', PermissionGroup.PUBLIC_USERS],
-  ['CREATE_SUBSCRIPTION', PermissionGroup.PUBLIC_USERS],
-  ['UPDATE_SUBSCRIPTION', PermissionGroup.PUBLIC_USERS]
-];
+/**
+ * Add new permissions as keys
+ * - Use Pascal case, e.g. `Resource.SubResource.Action`
+ * - Re-run `npm run seed permissions` when updating this object!
+ *
+ * Actions can be:
+ * - View (replacing Read from CRUD)
+ * - Create
+ * - Update
+ * - Delete
+ *
+ * Main resource is required
+ * - Sub-resource is optional
+ * - Both must be singular, e.g. `Character.View`, not `Characters.View`
+ *
+ * Values are objects of `PermissionColumn` type
+ * - Can add new fields to the type as needed
+ * - `PermissionGroup` is just a shared reference for common permissions
+ * - Visualize this object as a table with permissions as rows and roles as columns
+ */
+const PermissionRecord = {
+  'Dashboard.View': PermissionGroup.EVERYONE,
+  'Service.View': PermissionGroup.EVERYONE,
+  'Service.Create': PermissionGroup.ADMINS_AND_TRAINERS,
+  'Service.Update': PermissionGroup.ADMINS_AND_TRAINERS,
+  'Service.Delete': PermissionGroup.ADMINS_AND_TRAINERS,
+  'Template.View': PermissionGroup.ADMINS_AND_TRAINERS,
+  'Template.Create': PermissionGroup.ADMINS_AND_TRAINERS,
+  'Template.Update': PermissionGroup.ADMINS_AND_TRAINERS,
+  'Template.Delete': PermissionGroup.ADMINS_AND_TRAINERS,
+  'Character.View': PermissionGroup.ADMINS_AND_TRAINERS,
+  'Character.Create': PermissionGroup.ADMINS_AND_TRAINERS,
+  'Character.Update': PermissionGroup.ADMINS_AND_TRAINERS,
+  'Character.Delete': PermissionGroup.ADMINS_AND_TRAINERS,
+  'Character.Voice.View': PermissionGroup.ADMINS_AND_TRAINERS,
+  'Character.Language.View': PermissionGroup.ADMINS_AND_TRAINERS,
+  'Simulation.View': PermissionGroup.EVERYONE,
+  'Simulation.Create': PermissionGroup.LEARNERS,
+  'Transcript.Comment.Create': PermissionGroup.ADMINS_AND_TRAINERS,
+  'Transcript.Comment.Delete': PermissionGroup.ADMINS_AND_TRAINERS,
+  'Transcript.Create': PermissionGroup.LEARNERS,
+  'User.View': PermissionGroup.ADMINS,
+  'User.Create': PermissionGroup.ADMINS,
+  'User.Update': PermissionGroup.ADMINS,
+  'User.Delete': PermissionGroup.ADMINS,
+  'User.Experience.View': PermissionGroup.EVERYONE,
+  'Organization.View': PermissionGroup.ADMINS,
+  'Organization.Create': PermissionGroup.PUBLIC_ADMINS,
+  'Organization.Update': PermissionGroup.PUBLIC_ADMINS,
+  'Organization.Delete': PermissionGroup.PUBLIC_ADMINS,
+  'Organization.Settings.View': { organizationOwner: true },
+  'Organization.Settings.Create': { organizationOwner: true },
+  'Organization.Settings.Update': { organizationOwner: true },
+  'Organization.Subscription.View': { organizationOwner: true },
+  'Organization.Subscription.Create': { organizationOwner: true },
+  'Organization.Subscription.Update': { organizationOwner: true },
+  'Organization.Usage.View': { organizationOwner: true },
+  'Invitation.Create': PermissionGroup.ADMINS,
+  'Invitation.Update': PermissionGroup.ADMINS,
+  'Log.View': PermissionGroup.ADMINS,
+  'Account.View': PermissionGroup.EVERYONE,
+  'Account.Create': PermissionGroup.EVERYONE,
+  'Account.Update': PermissionGroup.EVERYONE,
+  'Account.Subscription.View': PermissionGroup.PUBLIC_USERS,
+  'Account.Subscription.Create': PermissionGroup.PUBLIC_USERS,
+  'Account.Subscription.Update': PermissionGroup.PUBLIC_USERS,
+  'Avatar.View': PermissionGroup.EVERYONE,
+  'Avatar.Create': PermissionGroup.PUBLIC_ADMINS,
+  'Avatar.Update': PermissionGroup.PUBLIC_ADMINS,
+  'Avatar.Delete': PermissionGroup.PUBLIC_ADMINS,
+  'Environment.View': PermissionGroup.EVERYONE,
+  'Environment.Create': PermissionGroup.PUBLIC_ADMINS,
+  'Environment.Update': PermissionGroup.PUBLIC_ADMINS,
+  'Environment.Delete': PermissionGroup.PUBLIC_ADMINS
+} as const satisfies Record<string, PermissionColumn>;
+
+export const PERMISSIONS = Object.keys(
+  PermissionRecord
+) as Permission[];
 
 function selectRecordColumn(column: keyof PermissionColumn) {
-  return PermissionRecord.filter(
-    ([_, permissionColumn]) => permissionColumn[column]
-  ).map(([permission]) => permission);
+  const entries = Object.entries(PermissionRecord) as PermissionEntry[];
+
+  return entries
+    .filter(([_, permissionColumn]) => permissionColumn[column])
+    .map(([permission]) => permission);
 }
 
 export const OrganizationPermissions = [
@@ -211,7 +176,7 @@ export const PublicOrganizationPermissions = [
     permissions: selectRecordColumn('publicAdmin')
   },
   {
-    role: 'Super Admin',
+    role: roles.SUPER_ADMIN,
     permissions: selectRecordColumn('publicSuperAdmin')
   }
 ];

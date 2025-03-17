@@ -21,9 +21,16 @@ async function uploadEnvironmentImage(file: Express.Multer.File) {
 }
 
 async function createEnvironment(
-  environmentData: Partial<EnvironmentType>
+  environmentData: Partial<
+    EnvironmentType & { available_characters: string }
+  >
 ) {
-  const newEnvironment = await Environment.create(environmentData);
+  const avatarMeshIds =
+    environmentData.available_characters?.split(',');
+  const newEnvironment = await Environment.create({
+    ...environmentData,
+    avatar_mesh_ids: avatarMeshIds
+  });
 
   return newEnvironment;
 }
@@ -33,14 +40,21 @@ async function updateEnvironment({
   environmentData
 }: {
   id: string;
-  environmentData: Partial<EnvironmentType>;
+  environmentData: Partial<
+    EnvironmentType & { available_characters: string }
+  >;
 }) {
   const environment = await Environment.findById(id);
   if (!environment) throw Error(messages.ENVIRONMENT_NOT_FOUND);
 
+  const avatarMeshIds =
+    environmentData.available_characters?.split(',');
   const updatedEnvironment = await Environment.findByIdAndUpdate(
     { _id: id },
-    environmentData,
+    {
+      ...environmentData,
+      avatar_mesh_ids: avatarMeshIds
+    },
     { new: true }
   );
 

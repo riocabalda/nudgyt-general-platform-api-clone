@@ -1,4 +1,5 @@
 import asyncWrapper from '../../helpers/async-wrapper';
+import globalCharacterService from '../../services/character.service';
 import characterService from '../../services/admin/character.service';
 import createResponse from '../../utils/create-response';
 
@@ -86,7 +87,7 @@ const createCharacter = asyncWrapper(async (req, res, next) => {
 });
 
 const getCharacterVoiceTypes = asyncWrapper(async (req, res, next) => {
-  const voiceTypes = await characterService.getCharacterVoiceTypes();
+  const voiceTypes = await globalCharacterService.getConvaiVoiceTypes();
 
   const response = createResponse({ data: voiceTypes });
 
@@ -95,7 +96,7 @@ const getCharacterVoiceTypes = asyncWrapper(async (req, res, next) => {
 
 const getAvailableLanguages = asyncWrapper(async (req, res, next) => {
   const availableLanguages =
-    await characterService.getAvailableLanguages();
+    await globalCharacterService.getConvaiLanguages();
 
   const response = createResponse({ data: availableLanguages });
 

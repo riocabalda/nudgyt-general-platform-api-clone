@@ -15,6 +15,7 @@ type Handshake = {
 type SocketType = Socket & {
   handshake: Handshake;
   payload: any;
+  user: any;
 };
 
 type NextFunction = (err?: Error) => void;
@@ -23,17 +24,22 @@ export const authenticateWs = async (
   socket: SocketType,
   next: NextFunction
 ) => {
-  console.log('====== authenticateWs ======');
   const { accessToken: bearerToken, payload: socketPayload } =
     socket.handshake.auth;
   const accessToken = bearerToken?.split(' ')[1];
-  console.log('====== accessToken ======', accessToken);
   if (!accessToken)
     return next(new Error('Authentication error: No token.'));
 
   try {
-    const { data: rawPayload } =
+    const { data: rawPayload, error: rawPayloadError } =
       encryptionService.verifyTokenSafely(accessToken);
+
+    if (rawPayloadError === 'token expired') {
+      return next(
+        new Error('Authentication error: Access token is expired.')
+      );
+    }
+
     if (!rawPayload) throw createHttpError.Unauthorized();
 
     const { data: payload } = AccessTokenSchema.safeParse(rawPayload);
@@ -45,13 +51,18 @@ export const authenticateWs = async (
     const defaultMembership =
       userService.getUserDefaultMembership(user);
     if (defaultMembership === null) {
-      throw createHttpError.Unauthorized(
-        'Your account has no access to this platform.'
+      return next(
+        new Error('Your account has no access to this platform.')
       );
     }
+
     if (user.archived_at)
       throw createHttpError.Unauthorized(messages.EMAIL_NOT_FOUND);
+
+    // Store both the user and the payload in the socket object
+    socket.user = user;
     socket.payload = socketPayload;
+
     return next();
   } catch (error) {
     next(new Error('Authentication error: Invalid token.'));

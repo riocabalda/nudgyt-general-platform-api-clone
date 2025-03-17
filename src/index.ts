@@ -1,6 +1,7 @@
 import app from './app';
 import connectDb from './helpers/db';
 import serverConfig from './config/server.config';
+import './services/cron.service';
 
 const startServer = async () => {
   try {

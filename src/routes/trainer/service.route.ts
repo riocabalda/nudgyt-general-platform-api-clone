@@ -14,11 +14,11 @@ const upload = multer({
 });
 
 router.get('/', serviceController.getServices);
-router.get('/recent', serviceController.getRecentServices);
-router.get('/stats', serviceController.getServicesStats);
+router.get('/recent', requirePermissions(['Dashboard.View']), serviceController.getRecentServices);
+router.get('/stats', requirePermissions(['Dashboard.View']), serviceController.getServicesStats);
 router.get('/service-types', serviceController.getServiceTypes);
-router.get('/metrics', serviceController.getServiceMetrics);
-router.get('/popularity', serviceController.getPopularServices);
+router.get('/metrics', requirePermissions(['Dashboard.View']), serviceController.getServiceMetrics);
+router.get('/popularity', requirePermissions(['Dashboard.View']), serviceController.getPopularServices);
 router.get('/:id', serviceController.getServiceById);
 router.get(
   '/:id/learners-scores',
@@ -27,7 +27,7 @@ router.get(
 
 router.post(
   '/',
-  requirePermissions(['CREATE_SERVICES']),
+  requirePermissions(['Service.Create']),
   [
     upload.fields([
       { name: 'rubrics', maxCount: 1 },
@@ -40,7 +40,7 @@ router.post(
 
 router.patch(
   '/:id',
-  requirePermissions(['UPDATE_SERVICES']),
+  requirePermissions(['Service.Update']),
   [
     upload.fields([
       { name: 'rubrics', maxCount: 1 },
@@ -52,18 +52,18 @@ router.patch(
 );
 router.patch(
   '/:id/publish',
-  requirePermissions(['UPDATE_SERVICES']),
+  requirePermissions(['Service.Update']),
   serviceController.publishService
 );
 router.patch(
   '/:id/unpublish',
-  requirePermissions(['UPDATE_SERVICES']),
+  requirePermissions(['Service.Update']),
   serviceController.unpublishService
 );
 
 router.patch(
   '/:id/delete',
-  requirePermissions(['DELETE_SERVICES']),
+  requirePermissions(['Service.Delete']),
   serviceController.deleteService
 );
 

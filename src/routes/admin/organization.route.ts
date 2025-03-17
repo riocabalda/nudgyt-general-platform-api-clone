@@ -7,18 +7,18 @@ const router = express.Router({ mergeParams: true });
 
 router.get(
   '/',
-  requirePermissions(['VIEW_ORGANIZATIONS']),
+  requirePermissions(['Organization.View']),
   organizationController.getOrganizations
 );
 router.get(
   '/enterprises',
-  requirePermissions(['VIEW_ORGANIZATIONS']),
+  requirePermissions(['Organization.View']),
   organizationValidation.getEnterprises,
   organizationController.getEnterprises
 );
 router.get(
   '/public',
-  requirePermissions(['VIEW_ORGANIZATIONS']),
+  requirePermissions(['Organization.View']),
   organizationController.getPublicOrganization
 );
 router.get(
@@ -28,26 +28,26 @@ router.get(
 
 router.patch(
   '/:id',
-  requirePermissions(['UPDATE_ORGANIZATIONS']),
+  requirePermissions(['Organization.Update']),
   organizationValidation.updateOrganization,
   organizationController.updateOrganizationStatus
 );
 router.patch(
   '/enterprises/:id',
-  requirePermissions(['UPDATE_ORGANIZATIONS']),
+  requirePermissions(['Organization.Update']),
   organizationValidation.updateEnterprise,
   organizationController.updateEnterprise
 );
 
 router.post(
   '/bulk-update-status',
-  requirePermissions(['UPDATE_ORGANIZATIONS']),
+  requirePermissions(['Organization.Update']),
   organizationValidation.bulkUpdateOrganizations,
   organizationController.bulkUpdateOrganizationStatus
 );
 router.post(
   '/enterprises/bulk-update-status',
-  requirePermissions(['UPDATE_ORGANIZATIONS']),
+  requirePermissions(['Organization.Update']),
   organizationValidation.bulkUpdateEnterprises,
   organizationController.bulkUpdateEnterprises
 );
@@ -59,7 +59,7 @@ router.get(
 );
 router.patch(
   '/:orgSlug/add-extra-learners',
-  requirePermissions(['UPDATE_ORGANIZATIONS']),
+  requirePermissions(['Organization.Update']),
   organizationValidation.addOrgExtraLearners,
   organizationController.addOrgExtraLearners
 );

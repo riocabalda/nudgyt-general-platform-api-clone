@@ -7,103 +7,105 @@ const router = express.Router({ mergeParams: true });
 
 router.get(
   '/',
-  requirePermissions(['VIEW_USERS'], { allowPublicAdmins: true }),
+  requirePermissions(['User.View'], { allowPublicAdmins: true }),
   userController.getUsers
 );
 router.get('/stats', userController.getLearnerStats);
 router.get(
   '/trainers',
-  requirePermissions(['VIEW_USERS'], { allowPublicAdmins: true }),
+  requirePermissions(['User.View'], { allowPublicAdmins: true }),
   userController.getTrainers
 );
 router.get(
   '/learners',
-  requirePermissions(['VIEW_USERS'], { allowPublicAdmins: true }),
+  requirePermissions(['User.View'], { allowPublicAdmins: true }),
   userController.getLearners
 );
 router.get(
   '/:userId',
-  requirePermissions(['VIEW_USERS'], { allowPublicAdmins: true }),
+  requirePermissions(['User.View'], { allowPublicAdmins: true }),
   userValidation.getUserById,
   userController.getUserById
 );
 router.get(
   '/:userId/recent-services',
+  requirePermissions(['Service.View']),
   userValidation.getUserRecentServices,
   userController.getUserRecentServices
 );
 router.get(
   '/:userId/learner-experience',
+  requirePermissions(['User.Experience.View']),
   userController.getLearnerExperience
 );
 router.patch(
   '/:userId/approve',
-  requirePermissions(['UPDATE_USERS'], { allowPublicAdmins: true }),
+  requirePermissions(['User.Update'], { allowPublicAdmins: true }),
   userController.approveUser
 );
 router.patch(
   '/:userId/block',
-  requirePermissions(['UPDATE_USERS'], { allowPublicAdmins: true }),
+  requirePermissions(['User.Update'], { allowPublicAdmins: true }),
   userController.blockUser
 );
 router.patch(
   '/:userId/unblock',
-  requirePermissions(['UPDATE_USERS'], { allowPublicAdmins: true }),
+  requirePermissions(['User.Update'], { allowPublicAdmins: true }),
   userController.unblockUser
 );
 router.patch(
   '/:userId/archive',
-  requirePermissions(['UPDATE_USERS'], { allowPublicAdmins: true }),
+  requirePermissions(['User.Update'], { allowPublicAdmins: true }),
   userValidation.archiveUser,
   userController.archiveUser
 );
 router.post(
   '/bulk-approve',
-  requirePermissions(['UPDATE_USERS'], { allowPublicAdmins: true }),
+  requirePermissions(['User.Update'], { allowPublicAdmins: true }),
   userValidation.bulkApproveUsers,
   userController.bulkApproveUsers
 );
 router.post(
   '/bulk-block',
-  requirePermissions(['UPDATE_USERS'], { allowPublicAdmins: true }),
+  requirePermissions(['User.Update'], { allowPublicAdmins: true }),
   userValidation.bulkBlockUsers,
   userController.bulkBlockUsers
 );
 router.post(
   '/bulk-unblock',
-  requirePermissions(['UPDATE_USERS'], { allowPublicAdmins: true }),
+  requirePermissions(['User.Update'], { allowPublicAdmins: true }),
   userValidation.bulkUnblockUsers,
   userController.bulkUnblockUsers
 );
 router.post(
   '/bulk-archive',
-  requirePermissions(['UPDATE_USERS'], { allowPublicAdmins: true }),
+  requirePermissions(['User.Update'], { allowPublicAdmins: true }),
   userValidation.bulkArchiveUsers,
   userController.bulkArchiveUsers
 );
 
 router.post(
   '/invite',
-  requirePermissions(['CREATE_INVITATIONS']),
+  requirePermissions(['Invitation.Create']),
   userValidation.inviteUser,
   userController.inviteUser
 );
 router.post(
   '/invite/owner/basic',
-  requirePermissions(['CREATE_INVITATIONS', 'CREATE_ORGANIZATIONS']),
+  requirePermissions(['Invitation.Create', 'Organization.Create']),
   userValidation.inviteOwnerBasic,
   userController.inviteOwnerBasic
 );
 router.post(
   '/invite/owner/enterprise',
-  requirePermissions(['CREATE_INVITATIONS', 'CREATE_ORGANIZATIONS']),
+  requirePermissions(['Invitation.Create', 'Organization.Create']),
   userValidation.inviteOwnerEnterprise,
   userController.inviteOwnerEnterprise
 );
 
 router.get(
   '/accounts/access',
-  requirePermissions(['VIEW_ACCOUNT']),
+  requirePermissions(['Account.View']),
   userValidation.getAccess,
   userController.getAccess
 );
